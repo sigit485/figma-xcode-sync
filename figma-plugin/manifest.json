@@ -1,12 +1,13 @@
 {
   "name": "Xcode Asset Sync",
-  "id": "xcode-asset-sync",
+  "id": "1636296315360040909",
   "api": "1.0.0",
   "main": "dist/code.js",
   "ui": "dist/ui.html",
   "editorType": ["figma"],
+  "documentAccess": "dynamic-page",
   "networkAccess": {
     "allowedDomains": ["*"],
-    "reasoning": "Communicates with a local companion macOS app that writes exported icon assets (PNG/SVG) into the user's Xcode project .xcassets folder, mirroring the workflow of tools like Zeplin."
+    "reasoning": "Communicates with a local companion macOS app (running on localhost:9876) that writes exported PNG and SVG icon assets directly into the user's Xcode .xcassets catalog. This enables one-click sync from Figma to Xcode without manual export or drag-and-drop."
   }
 }
