@@ -1,0 +1,16 @@
+{
+  "name": "xcode-asset-sync-plugin",
+  "version": "1.0.0",
+  "description": "Sync Figma icons directly into your Xcode .xcassets",
+  "scripts": {
+    "build": "esbuild src/code.ts --bundle --outfile=dist/code.js --target=es6 && node build-ui.js",
+    "watch": "chokidar 'src/**/*' -c 'npm run build'",
+    "dev": "npm run watch"
+  },
+  "devDependencies": {
+    "@figma/plugin-typings": "^1.96.0",
+    "esbuild": "^0.21.0",
+    "chokidar-cli": "^3.0.0",
+    "typescript": "^5.4.0"
+  }
+}

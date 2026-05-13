@@ -1,0 +1,26 @@
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Swift / Xcode
+.build/
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+.swiftpm/
+
+# Node.js
+node_modules/
+npm-debug.log*
+
+# Build artifacts
+figma-plugin/dist/
+companion-app/build/
+
+# Xcode project config (user-specific, not committed)
+.xcode-asset-sync.json
+
+# Logs
+*.log

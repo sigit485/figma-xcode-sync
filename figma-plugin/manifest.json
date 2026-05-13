@@ -1,0 +1,12 @@
+{
+  "name": "Xcode Asset Sync",
+  "id": "xcode-asset-sync",
+  "api": "1.0.0",
+  "main": "dist/code.js",
+  "ui": "dist/ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["*"],
+    "reasoning": "Communicates with a local companion macOS app that writes exported icon assets (PNG/SVG) into the user's Xcode project .xcassets folder, mirroring the workflow of tools like Zeplin."
+  }
+}

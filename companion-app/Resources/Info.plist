@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>CFBundleExecutable</key>
+    <string>XcodeAssetSync</string>
+    <key>CFBundleIdentifier</key>
+    <string>com.xcode-asset-sync</string>
+    <key>CFBundleName</key>
+    <string>XcodeAssetSync</string>
+    <key>CFBundleDisplayName</key>
+    <string>Xcode Asset Sync</string>
+    <key>CFBundleVersion</key>
+    <string>1.0.0</string>
+    <key>CFBundleShortVersionString</key>
+    <string>1.0.0</string>
+    <key>CFBundlePackageType</key>
+    <string>APPL</string>
+    <key>NSPrincipalClass</key>
+    <string>NSApplication</string>
+    <key>LSUIElement</key>
+    <true/>
+    <key>LSMinimumSystemVersion</key>
+    <string>13.0</string>
+    <key>NSAccessibilityUsageDescription</key>
+    <string>Xcode Asset Sync needs Accessibility access to detect which .xcassets file is currently open in Xcode, so Figma assets sync to the right folder automatically.</string>
+    <key>NSHumanReadableCopyright</key>
+    <string>MIT License</string>
+</dict>
+</plist>

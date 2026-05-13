@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Xcode Asset Sync</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #1e1e1e;
+    --bg2: #2c2c2c;
+    --bg3: #383838;
+    --border: #444;
+    --text: #e8e8e8;
+    --text2: #999;
+    --accent: #0a84ff;
+    --accent-hover: #409cff;
+    --success: #32d74b;
+    --error: #ff453a;
+    --warning: #ffd60a;
+    --radius: 8px;
+  }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", sans-serif;
+    font-size: 13px;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* ── Header ── */
+  .header {
+    padding: 16px 16px 12px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .header-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .logo-icon {
+    width: 24px; height: 24px;
+    background: var(--accent);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
+  }
+  .status-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--error);
+    transition: background 0.3s;
+  }
+  .status-dot.connected { background: var(--success); }
+  .status-row {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 11px; color: var(--text2);
+  }
+
+  /* ── Section ── */
+  .section { padding: 12px 16px; border-bottom: 1px solid var(--border); }
+  .section-label {
+    font-size: 10px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.06em; color: var(--text2); margin-bottom: 8px;
+  }
+
+  /* ── Connection banner ── */
+  .banner {
+    margin: 12px 16px;
+    padding: 12px 14px;
+    border-radius: var(--radius);
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .banner-icon { font-size: 18px; flex-shrink: 0; margin-top: 1px; }
+  .banner-title { font-weight: 600; margin-bottom: 3px; }
+  .banner-body { color: var(--text2); font-size: 12px; line-height: 1.5; }
+  .banner-link {
+    display: inline-block; margin-top: 8px;
+    background: var(--accent); color: #fff;
+    padding: 5px 12px; border-radius: 6px; font-size: 12px;
+    text-decoration: none; cursor: pointer; border: none;
+  }
+  .banner-link:hover { background: var(--accent-hover); }
+
+  /* ── Selection list ── */
+  .selection-list {
+    max-height: 180px; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .selection-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; border-radius: 6px;
+    background: var(--bg2); border: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+  .selection-item:hover { border-color: var(--border); }
+  .item-icon { width: 28px; height: 28px; background: var(--bg3); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: var(--text2); }
+  .item-info { flex: 1; min-width: 0; }
+  .item-original { font-size: 11px; color: var(--text2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .item-output { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .empty-state {
+    padding: 24px; text-align: center; color: var(--text2);
+    line-height: 1.6;
+  }
+  .empty-state .emoji { font-size: 28px; margin-bottom: 8px; display: block; }
+
+  /* ── Format toggle ── */
+  .toggle-group { display: flex; gap: 6px; }
+  .toggle-btn {
+    flex: 1; padding: 7px; border-radius: 6px;
+    border: 1px solid var(--border); background: var(--bg2);
+    color: var(--text); font-size: 12px; cursor: pointer;
+    transition: all 0.15s; text-align: center;
+  }
+  .toggle-btn.active {
+    background: var(--accent); border-color: var(--accent); color: #fff;
+  }
+
+  /* ── Rendering mode ── */
+  .radio-group { display: flex; flex-direction: column; gap: 6px; }
+  .radio-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 8px 10px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--bg2);
+    transition: border-color 0.15s;
+  }
+  .radio-item.selected { border-color: var(--accent); }
+  .radio-dot {
+    width: 14px; height: 14px; border-radius: 50%;
+    border: 2px solid var(--border); flex-shrink: 0;
+    transition: all 0.15s;
+  }
+  .radio-item.selected .radio-dot {
+    border-color: var(--accent); background: var(--accent);
+  }
+  .radio-label { font-size: 12px; }
+  .radio-desc { font-size: 11px; color: var(--text2); margin-top: 1px; }
+
+  /* ── Progress ── */
+  .progress-wrap { margin: 0 16px 12px; }
+  .progress-label { font-size: 11px; color: var(--text2); margin-bottom: 6px; }
+  .progress-bar { height: 4px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--accent); border-radius: 2px; transition: width 0.2s; }
+
+  /* ── Log ── */
+  .log-area {
+    margin: 0 16px 12px;
+    max-height: 100px; overflow-y: auto;
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 8px 10px;
+    font-family: "SF Mono", monospace; font-size: 11px;
+    color: var(--text2); line-height: 1.6;
+  }
+  .log-ok { color: var(--success); }
+  .log-err { color: var(--error); }
+
+  /* ── Sync button ── */
+  .footer { padding: 12px 16px; margin-top: auto; border-top: 1px solid var(--border); }
+  .sync-btn {
+    width: 100%; padding: 11px; border-radius: var(--radius);
+    background: var(--accent); color: #fff;
+    font-size: 14px; font-weight: 600; border: none; cursor: pointer;
+    transition: all 0.15s; display: flex; align-items: center; justify-content: center; gap: 8px;
+  }
+  .sync-btn:hover:not(:disabled) { background: var(--accent-hover); }
+  .sync-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .sync-btn.success { background: var(--success); }
+  .sync-btn.error { background: var(--error); }
+
+  .spinner {
+    width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3);
+    border-top-color: #fff; border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-logo">
+    <div class="logo-icon">⚡</div>
+    Xcode Asset Sync
+  </div>
+  <div class="status-row">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="statusText">Checking...</span>
+  </div>
+</div>
+
+<!-- Connection Banner (hidden when connected) -->
+<div class="banner" id="connectionBanner" style="display:none">
+  <span class="banner-icon">🖥</span>
+  <div>
+    <div class="banner-title">Companion app not running</div>
+    <div class="banner-body">
+      Download and launch the Xcode Asset Sync companion app to enable automatic sync to your Xcode project.
+    </div>
+    <button class="banner-link" onclick="openCompanionDownload()">Download for Mac →</button>
+  </div>
+</div>
+
+<!-- Selection preview -->
+<div class="section">
+  <div class="section-label">Selected icons</div>
+  <div class="selection-list" id="selectionList">
+    <div class="empty-state">
+      <span class="emoji">🔲</span>
+      Select icon frames in Figma to get started
+    </div>
+  </div>
+</div>
+
+<!-- Format toggle -->
+<div class="section">
+  <div class="section-label">Export format</div>
+  <div class="toggle-group">
+    <button class="toggle-btn active" id="btnPNG" onclick="setFormat('PNG')">
+      PNG · 1x 2x 3x
+    </button>
+    <button class="toggle-btn" id="btnSVG" onclick="setFormat('SVG')">
+      SVG · vector
+    </button>
+  </div>
+</div>
+
+<!-- Rendering mode -->
+<div class="section">
+  <div class="section-label">Rendering mode</div>
+  <div class="radio-group">
+    <div class="radio-item selected" id="modeOriginal" onclick="setMode('original')">
+      <div class="radio-dot"></div>
+      <div>
+        <div class="radio-label">Original</div>
+        <div class="radio-desc">Keeps colors — use for multi-color icons</div>
+      </div>
+    </div>
+    <div class="radio-item" id="modeTemplate" onclick="setMode('template')">
+      <div class="radio-dot"></div>
+      <div>
+        <div class="radio-label">Template (tintable)</div>
+        <div class="radio-desc">Single-color mask — tintable via UIColor</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Progress (shown during export) -->
+<div class="progress-wrap" id="progressWrap" style="display:none">
+  <div class="progress-label" id="progressLabel">Exporting...</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+</div>
+<div class="log-area" id="logArea" style="display:none"></div>
+
+<!-- Footer -->
+<div class="footer">
+  <button class="sync-btn" id="syncBtn" onclick="startSync()" disabled>
+    Sync to Xcode
+  </button>
+</div>
+
+<script>
+const COMPANION_BASE = 'http://localhost:9876';
+
+let currentFormat = 'PNG';
+let currentMode = 'original';
+let isConnected = false;
+let selectionCount = 0;
+let isSyncing = false;
+let authToken = null;
+
+// ─── UI helpers ───────────────────────────────────────────────────────────────
+
+function log(msg, type = '') {
+  const area = document.getElementById('logArea');
+  area.style.display = 'block';
+  const line = document.createElement('div');
+  if (type) line.className = 'log-' + type;
+  line.textContent = msg;
+  area.appendChild(line);
+  area.scrollTop = area.scrollHeight;
+}
+
+function setFormat(fmt) {
+  currentFormat = fmt;
+  document.getElementById('btnPNG').classList.toggle('active', fmt === 'PNG');
+  document.getElementById('btnSVG').classList.toggle('active', fmt === 'SVG');
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  document.getElementById('modeOriginal').classList.toggle('selected', mode === 'original');
+  document.getElementById('modeTemplate').classList.toggle('selected', mode === 'template');
+}
+
+function setConnected(connected) {
+  isConnected = connected;
+  document.getElementById('statusDot').className = 'status-dot' + (connected ? ' connected' : '');
+  document.getElementById('statusText').textContent = connected ? 'Connected' : 'Not connected';
+  document.getElementById('connectionBanner').style.display = connected ? 'none' : 'flex';
+  updateSyncButton();
+}
+
+function updateSyncButton() {
+  const btn = document.getElementById('syncBtn');
+  btn.disabled = !isConnected || selectionCount === 0 || isSyncing;
+  if (!isSyncing) {
+    btn.className = 'sync-btn';
+    btn.innerHTML = selectionCount > 0
+      ? `Sync ${selectionCount} icon${selectionCount > 1 ? 's' : ''} to Xcode`
+      : 'Select icons to sync';
+  }
+}
+
+function openCompanionDownload() {
+  // Replace with your actual download URL when published
+  window.open('https://github.com/yourusername/xcode-asset-sync/releases');
+}
+
+// ─── Check companion app ──────────────────────────────────────────────────────
+
+async function checkConnection() {
+  try {
+    const res = await fetch(`${COMPANION_BASE}/ping`, { method: 'GET' });
+    if (res.ok) {
+      const data = await res.json();
+      authToken = data.token || null;
+      setConnected(true);
+    } else {
+      setConnected(false);
+    }
+  } catch {
+    setConnected(false);
+  }
+}
+
+// ─── Selection preview ────────────────────────────────────────────────────────
+
+function renderSelection(items, pageName) {
+  selectionCount = items.length;
+  const list = document.getElementById('selectionList');
+
+  if (items.length === 0) {
+    list.innerHTML = `
+      <div class="empty-state">
+        <span class="emoji">🔲</span>
+        Select icon frames in Figma to get started
+      </div>`;
+    updateSyncButton();
+    return;
+  }
+
+  list.innerHTML = items.map(item => `
+    <div class="selection-item">
+      <div class="item-icon">${Math.round(item.width)}px</div>
+      <div class="item-info">
+        <div class="item-original">${item.name}</div>
+        <div class="item-output">${item.iconName}</div>
+      </div>
+    </div>
+  `).join('');
+
+  updateSyncButton();
+}
+
+// ─── Sync ─────────────────────────────────────────────────────────────────────
+
+function startSync() {
+  if (isSyncing || !isConnected) return;
+
+  isSyncing = true;
+  document.getElementById('logArea').innerHTML = '';
+  document.getElementById('progressWrap').style.display = 'block';
+
+  const btn = document.getElementById('syncBtn');
+  btn.innerHTML = '<div class="spinner"></div> Exporting...';
+  btn.disabled = true;
+
+  parent.postMessage({
+    pluginMessage: {
+      type: 'export',
+      format: currentFormat,
+      renderingMode: currentMode
+    }
+  }, '*');
+}
+
+async function sendToCompanion(icons, pageName) {
+  try {
+    log(`Sending ${icons.length} icons to companion app...`);
+    const headers = { 'Content-Type': 'application/json' };
+    if (authToken) headers['X-Auth-Token'] = authToken;
+
+    const res = await fetch(`${COMPANION_BASE}/import-assets`, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({ pageName, icons })
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      data.results?.forEach(r => {
+        log(`✓ ${r.name}`, 'ok');
+      });
+      data.errors?.forEach(e => {
+        log(`✗ ${e.name}: ${e.error}`, 'err');
+      });
+
+      const btn = document.getElementById('syncBtn');
+      btn.className = 'sync-btn success';
+      btn.innerHTML = `✓ ${icons.length} icon${icons.length > 1 ? 's' : ''} synced!`;
+      setTimeout(() => {
+        isSyncing = false;
+        updateSyncButton();
+      }, 2500);
+    } else {
+      throw new Error(data.message || 'Unknown error');
+    }
+  } catch (err) {
+    log(`Error: ${err.message}`, 'err');
+    const btn = document.getElementById('syncBtn');
+    btn.className = 'sync-btn error';
+    btn.innerHTML = '✗ Sync failed — check companion app';
+    setTimeout(() => { isSyncing = false; updateSyncButton(); }, 3000);
+  }
+}
+
+// ─── Messages from plugin sandbox ────────────────────────────────────────────
+
+window.onmessage = async (event) => {
+  const msg = event.data.pluginMessage;
+  if (!msg) return;
+
+  switch (msg.type) {
+    case 'selection-preview':
+      renderSelection(msg.items, msg.pageName);
+      break;
+
+    case 'export-start':
+      log(`Starting export of ${msg.count} icons...`);
+      break;
+
+    case 'export-progress': {
+      const pct = Math.round((msg.current / msg.total) * 100);
+      document.getElementById('progressFill').style.width = pct + '%';
+      document.getElementById('progressLabel').textContent =
+        `Exporting ${msg.current}/${msg.total}: ${msg.name}`;
+      break;
+    }
+
+    case 'export-item-error':
+      log(`✗ ${msg.name}: ${msg.error}`, 'err');
+      break;
+
+    case 'export-ready':
+      log(`Export done. Sending to Xcode...`);
+      document.getElementById('progressLabel').textContent = 'Sending to companion app...';
+      document.getElementById('progressFill').style.width = '100%';
+      await sendToCompanion(msg.icons, msg.pageName);
+      break;
+
+    case 'error':
+      log(`Error: ${msg.message}`, 'err');
+      isSyncing = false;
+      updateSyncButton();
+      break;
+  }
+};
+
+// ─── Init ─────────────────────────────────────────────────────────────────────
+
+checkConnection();
+setInterval(checkConnection, 5000); // poll every 5s
+</script>
+</body>
+</html>

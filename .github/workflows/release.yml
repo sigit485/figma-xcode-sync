@@ -1,0 +1,41 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build .app
+        run: |
+          cd companion-app
+          bash scripts/build-app.sh
+
+      - name: Zip .app
+        run: |
+          cd companion-app/build
+          zip -r XcodeAssetSync.zip XcodeAssetSync.app
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: companion-app/build/XcodeAssetSync.zip
+          generate_release_notes: true
+          body: |
+            ## Install
+
+            1. Download `XcodeAssetSync.zip` below
+            2. Unzip → double-click `XcodeAssetSync.app`
+            3. Click **Install** in the dialog
+            4. Grant **Accessibility** permission when prompted
+
+            That's it — the app runs silently in the background and auto-starts on login.
+
+            > **First time on macOS:** If Gatekeeper blocks the app, right-click → Open → Open.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

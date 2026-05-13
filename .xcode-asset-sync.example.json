@@ -1,0 +1,12 @@
+{
+  "projectRootPath": "/Users/yourname/Code/Lacak",
+  "modules": {
+    "home":     "Lacak/Modul/Home/Asset/HomeAssets.xcassets",
+    "goal":     "Lacak/Modul/Goal/Asset/GoalAssets.xcassets",
+    "analytic": "Lacak/Modul/Analytic/Asset/AnalyticAssets.xcassets",
+    "profile":  "Lacak/Modul/Profile/Asset/ProfileAssets.xcassets"
+  },
+  "naming": "{module}_ic_{name}",
+  "defaultFormat": "png",
+  "defaultScales": [1, 2, 3]
+}
