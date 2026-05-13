@@ -4,6 +4,8 @@ Sync icons from Figma directly into your Xcode `.xcassets` — no drag and drop,
 
 Select frames in Figma, click **Sync**, and assets appear in your Xcode project instantly.
 
+> **Requires Figma desktop app** — the plugin communicates with a local companion app on your Mac. The browser version of Figma cannot reach localhost due to browser security restrictions.
+
 ![Plugin UI](https://raw.githubusercontent.com/sigit485/figma-xcode-sync/main/docs/preview.png)
 
 ---
