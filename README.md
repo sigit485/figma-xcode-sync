@@ -38,7 +38,11 @@ The companion app runs silently in the background. It detects which `.xcassets` 
 
 The app runs silently in the background and auto-starts on every login. No menu bar icon, no Dock presence.
 
-> **First time on macOS:** If Gatekeeper blocks the app, right-click → Open → Open.
+> **First time on macOS:** If you see *"damaged and can't be opened"*, run this in Terminal, then double-click again:
+> ```bash
+> xattr -cr ~/Downloads/XcodeAssetSync.app
+> ```
+> This removes the macOS quarantine flag. The app is not actually damaged — it just isn't signed with an Apple Developer ID.
 
 ### Figma Plugin
 
