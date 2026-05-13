@@ -24,3 +24,6 @@ companion-app/build/
 
 # Logs
 *.log
+
+# Claude Code
+.claude/
